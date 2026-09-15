@@ -16,3 +16,4 @@ public class Boss extends Enemy {
 //which in turn inherits from GameObject.Combined with multiple subclasses Fairy n Boss from Enemy.
 
 
+

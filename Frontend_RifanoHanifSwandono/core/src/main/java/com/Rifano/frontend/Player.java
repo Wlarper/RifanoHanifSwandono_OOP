@@ -46,6 +46,14 @@ public class Player extends GameObject {
     public void addScore(long points) {
         if (points > 0) {
             this.score += points;
+            System.out.println(getName() + " gained " + points + " pts! Total Score: " + this.score);
+        }
+    }
+
+    public void collectItem(Item item) {
+        System.out.println(getName() + " collected " + item.getItemType() + "!");
+        if (item.getScoreValue() > 0) {
+            addScore(item.getScoreValue());
         }
     }
 

@@ -11,3 +11,4 @@ public class Fairy extends Enemy {
         super(x, y, 24, 24, Color.PINK, name, hp, 500L);
     }
 }
+

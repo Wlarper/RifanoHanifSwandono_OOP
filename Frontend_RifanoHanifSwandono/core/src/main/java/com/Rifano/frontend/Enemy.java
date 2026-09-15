@@ -40,7 +40,7 @@ public class Enemy extends GameObject {
     }
 
     public void attack(Player player, int damage) {
-        System.out.println(this.name + "attacks" + player.name + " dealing " + damage + "DMG!!!!");
+        System.out.println(this.name + "attacks" + player.getName() + " dealing " + damage + "DMG!!!!");
         player.takeDamage(damage);
 
     }
