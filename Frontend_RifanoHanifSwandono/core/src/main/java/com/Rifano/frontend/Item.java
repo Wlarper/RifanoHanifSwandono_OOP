@@ -1,10 +1,12 @@
-package com.Rifano.frontend;
+package com.Rifano.frontend.objects.items;
 
+import com.Rifano.frontend.objects.GameObject;
 import com.badlogic.gdx.graphics.Color;
 
 public class Item extends GameObject {
     private String itemType;
     private long scoreValue;
+    private ItemType itemTypeEnum;
 
     public Item(float x, float y, String itemType) {
         super(x, y, 16, 16, 100f, Color.WHITE);
@@ -21,12 +23,34 @@ public class Item extends GameObject {
         this.itemType = itemType;
         this.scoreValue = scoreValue;
     }
+    public Item(float x, float y, ItemType itemTypeEnum) {
+        super(x, y, 16, 16, 100f, Color.WHITE);
+        this.itemTypeEnum = itemTypeEnum;
+        this.itemType = itemTypeEnum.name();
+        this.scoreValue = itemTypeEnum.getScoreValue();
+    }
+    public Item(float x, float y, float width, float height, float speed, ItemType itemTypeEnum, long scoreValue) {
+        super(x, y, width, height, speed, Color.WHITE);
+        this.itemTypeEnum = itemTypeEnum;
+        this.itemType = itemTypeEnum.name();
+        this.scoreValue = scoreValue;
+    }
+
     @Override
     public void update(float delta) {
         this.y -= this.speed * delta;
     }
 
+    public ItemType getItemTypeEnum() { // ADDED (Q9-2): new getter
+        return itemTypeEnum;
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+        if (other instanceof Player) {
+            // Item pickup is handled on the Player side via collectItem()
+        }
+    }
+
 }
 
-//Item needs to override update() because items have automatic, passive downward movement
-//very frame independent of game state.

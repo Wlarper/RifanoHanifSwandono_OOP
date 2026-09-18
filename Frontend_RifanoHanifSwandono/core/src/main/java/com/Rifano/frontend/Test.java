@@ -1,5 +1,12 @@
 package com.Rifano.frontend;
 
+import com.Rifano.frontend.objects.GameObject;
+import com.Rifano.frontend.objects.Player;
+import com.Rifano.frontend.objects.enemies.Enemy;
+import com.Rifano.frontend.objects.enemies.Fairy;
+import com.Rifano.frontend.objects.enemies.Boss;
+import com.Rifano.frontend.objects.items.Item;
+
 public class Test {
     public static void main(String[] args) {
         System.out.println("=== TOUHOU OOP PRACTICUM - MODULE 1: BASIC CLASSES & OBJECT INTERACTION ===");

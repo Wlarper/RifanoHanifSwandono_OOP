@@ -7,6 +7,13 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.Rifano.frontend.objects.GameObject;
+import com.Rifano.frontend.objects.Player;
+import com.Rifano.frontend.objects.enemies.Enemy;
+import com.Rifano.frontend.objects.enemies.Fairy;
+import com.Rifano.frontend.objects.enemies.Boss;
+import com.Rifano.frontend.objects.items.Item;
+
 public class Main extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
 
@@ -27,6 +34,10 @@ public class Main extends ApplicationAdapter {
 
         boss = new Boss("Cirno (Stage 2 Boss)", 150);
 
+        powerItem = new Item(200, 450, 16, 16, 80f, ItemType.POWER, 500L);
+        pointItem = new Item(320, 480, 12, 12, 120f, ItemType.POINT, 1000L);
+
+
         items = new ArrayList<>();
         items.add(new Item(100, 700, 12, 12, 100f, "Point Item", 100L));
         items.add(new Item(250, 750, 12, 12, 130f, "Power Item", 50L));
@@ -46,6 +57,22 @@ public class Main extends ApplicationAdapter {
         for (GameObject obj : gameObjects) {
             obj.update(delta);
         }
+
+        // AABB Collision detection between every unique entity pair
+        for (int i = 0; i < entities.size(); i++) {
+            for (int j = i + 1; j < entities.size(); j++) {
+                GameObject a = entities.get(i);
+                GameObject b = entities.get(j);
+                if(a.getCoreHitbox().overlaps(b.getCoreHitbox())){
+                   a.onCollision(a);
+                   b.onCollision(b);
+                }
+
+                // TODO: Check whether getCoreHitbox() of a and b overlap (use the .overlaps() method of Rectangle)
+                // TODO: Call a.onCollision(b) and b.onCollision(a)
+            }
+        }
+
 
         // 2. Clear Screen
         ScreenUtils.clear(0.1f, 0.1f, 0.15f, 1f);

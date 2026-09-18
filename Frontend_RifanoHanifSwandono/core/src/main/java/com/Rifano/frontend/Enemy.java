@@ -1,5 +1,7 @@
-package com.Rifano.frontend;
+package com.Rifano.frontend.objects.enemies;
 
+import com.Rifano.frontend.objects.GameObject; 
+import com.Rifano.frontend.objects.Player;
 import com.badlogic.gdx.graphics.Color;
 
 public class Enemy extends GameObject {
