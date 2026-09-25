@@ -1,11 +1,11 @@
 package com.Rifano.frontend;
 
-import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.Player;
+import com.Rifano.frontend.objects.enemies.Boss;
 import com.Rifano.frontend.objects.enemies.Enemy;
 import com.Rifano.frontend.objects.enemies.Fairy;
-import com.Rifano.frontend.objects.enemies.Boss;
 import com.Rifano.frontend.objects.items.Item;
+import com.Rifano.frontend.objects.items.ItemType;
 
 public class Test {
     public static void main(String[] args) {

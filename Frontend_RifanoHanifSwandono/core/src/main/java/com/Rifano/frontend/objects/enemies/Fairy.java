@@ -1,6 +1,8 @@
 package com.Rifano.frontend.objects.enemies;
 
-import com.Rifano.frontend.objects.GameObject;
+import com.Rifano.frontend.objects.Collidable;
+import com.Rifano.frontend.objects.Player;
+import com.Rifano.frontend.objects.items.Item;
 import com.badlogic.gdx.graphics.Color;
 
 public class Fairy extends Enemy {
@@ -14,9 +16,7 @@ public class Fairy extends Enemy {
 
     @Override
     public void onCollision(Collidable other) {
-        // TODO: Check whether the other received by this method is a Player
         if (other instanceof Player){
-        // TODO: Print "Player touches fairy"
             System.out.println("Player Touches Fairy");}
     }
 

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
-public abstract class GameObject implements Collidable {
+public abstract class GameObject implements com.Rifano.frontend.objects.Collidable {
     protected float x;
     protected float y;
     protected float width;
@@ -21,16 +21,15 @@ public abstract class GameObject implements Collidable {
         this.color = color;
 
     }
-
-    // update Method
-    //update() is left with an empty bod so that subclasses are not forced to implement update logic if they dont need it.
     public void update(float delta) {
     }
 
     // render Method
     public void render(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(this.color);
-        shapeRenderer.rect(this.x, this.y, this.width, this.height);
+        if (shapeRenderer != null && color != null && active) {
+            shapeRenderer.setColor(this.color);
+            shapeRenderer.rect(this.x, this.y, this.width, this.height);
+        }
     }
     @Override
     public Rectangle getCoreHitbox() {
@@ -39,7 +38,7 @@ public abstract class GameObject implements Collidable {
     public Rectangle getGrazeHitbox() {
         return new Rectangle(x - 10, y - 10, width + 20, height + 20);}
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(com.Rifano.frontend.objects.Collidable other) {
     }
 
     public float getX(){
@@ -79,6 +78,20 @@ public abstract class GameObject implements Collidable {
 
     public void setSpeed(float speed) {
         if (speed >= 0) this.speed = speed;
+    }
+
+    protected boolean active = true;
+
+    public boolean isDestroyed() {
+        return active == false;
+    }
+
+    public void destroy() {
+        this.active = false;
+    }
+
+    public boolean isOffScreen(float screenWidth, float screenHeight) {
+        return this.x < -50 || this.x > screenWidth + 50 || this.y < -50 || this.y > screenHeight + 50;
     }
 
 }

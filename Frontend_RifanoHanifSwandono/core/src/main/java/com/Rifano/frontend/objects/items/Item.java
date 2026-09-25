@@ -1,6 +1,9 @@
 package com.Rifano.frontend.objects.items;
 
 import com.Rifano.frontend.objects.GameObject;
+import com.Rifano.frontend.objects.Collidable;
+import com.Rifano.frontend.objects.Player;
+
 import com.badlogic.gdx.graphics.Color;
 
 public class Item extends GameObject {
@@ -36,13 +39,29 @@ public class Item extends GameObject {
         this.scoreValue = scoreValue;
     }
 
+    public ItemType getItemTypeEnum() {
+        return itemTypeEnum;
+    }
+
+    public String getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
+
+    public long getScoreValue() {
+        return scoreValue;
+    }
+
+    public void setScoreValue(long scoreValue) {
+        this.scoreValue = scoreValue;
+    }
+
     @Override
     public void update(float delta) {
         this.y -= this.speed * delta;
-    }
-
-    public ItemType getItemTypeEnum() { // ADDED (Q9-2): new getter
-        return itemTypeEnum;
     }
 
     @Override

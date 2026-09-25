@@ -1,5 +1,10 @@
 package com.Rifano.frontend.objects;
 
+import com.Rifano.frontend.objects.items.ItemType;
+import com.Rifano.frontend.objects.enemies.Enemy;
+import com.Rifano.frontend.objects.items.Item;
+import com.Rifano.frontend.objects.bullets.Bullet;
+import com.Rifano.frontend.objects.BulletType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -12,7 +17,7 @@ public class Player extends GameObject {
     private long score;
 
     public Player(String name, int hp, int power, int spellCards) {
-        super(280, 40, 32, 32, 0, Color.RED);
+        super(280, 40, 32, 32, 200f, Color.RED);
         this.name = name;
         this.hp = hp;
         this.power = power;
@@ -21,7 +26,7 @@ public class Player extends GameObject {
     }
 
     public Player(float x, float y, String name, int hp, int power, int spellCards) {
-        super(x, y, 32, 32, 0, Color.RED);
+        super(x, y, 32, 32, 200f, Color.RED);
         this.name = name;
         this.hp = hp;
         this.power = power;
@@ -45,6 +50,12 @@ public class Player extends GameObject {
         target.takeDamage(damage);
     }
 
+    public Bullet shootBullet() {
+        int damage = 10 + power;
+        System.out.println(name + " shoots bullet dealing " + damage + " DMG!");
+        return new Bullet(x + (width / 2) - 4, y + height, BulletType.AMULET, damage);
+    }
+
     public void addScore(long points) {
         if (points > 0) {
             this.score += points;
@@ -53,41 +64,31 @@ public class Player extends GameObject {
     }
 
     public void collectItem(Item item) {
+        if (item.isDestroyed()) return;
         ItemType type = item.getItemTypeEnum();
         if (type != null) {
             switch (type) {
                 case POWER -> {
-                    this.power += this.getPowerBonus();
+                    this.power += type.getPowerBonus();
                     addScore(item.getScoreValue());
-                    System.out.println(name + "collected POINT item!");
                     System.out.println(name + "Collected POWER item! power increased to" + power);
-                    // 1. Increase power by type.getPowerBonus() via this.power
-                    // 2. Add score by item.getScoreValue() via addScore() (addScore() already automatically prints "gained X pts!")
-                    // 3. Print: [name] collected POWER item! Power increased to [power]
                 }
                 case POINT -> {
                     addScore(item.getScoreValue());
                     System.out.println(name + "collected POINT item!");
-                    // 1. Add score by item.getScoreValue() via addScore()
-                    // 2. Print: [name] collected POINT item!
                 }
                 case BOMB -> {
                     spellCards += 1;
                     addScore(item.getScoreValue());
-                    System.out.println(name + "collected BOMB item! Spellcard: =" + spellCards);
-                    // 1. Increase spellCards by 1
-                    // 2. Add score by item.getScoreValue() via addScore()
-                    // 3. Print: [name] collected BOMB item! SpellCards: [spellCards]
+                    System.out.println(name + "collected BOMB item! Spellcards: " + spellCards);
                 }
                 case LIFE -> {
                     hp += 20;
                     addScore(item.getScoreValue());
                     System.out.println(name + "collected LIFE item! HP:" + hp);
-                    // 1. Increase hp by 20
-                    // 2. Add score by item.getScoreValue() via addScore()
-                    // 3. Print: [name] collected LIFE item! HP: [hp]
                 }
             }
+            item.destroy();
         } else {
             addScore(item.getScoreValue());
             System.out.println(name + " collected " + item.getItemType() + "!");
@@ -133,23 +134,19 @@ public class Player extends GameObject {
     @Override
     public void update(float delta) {
         if (Gdx.input != null) {
-            // TODO: Check W / UP input   → y += speed * delta
-            if(Gdx.input.isKeyPressed(Input.Keys.W) || (Gdx.input.isKeyPressed(Input.Keys.UP))
+            if(Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP) )
             {
                 y += speed * delta;
             }
-            // TODO: Check S / DOWN input → y -= speed * delta
-            else if(Gdx.input.isKeyPressed(Input.Keys.S) || (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+            if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN) )
             {
                 y -= speed * delta;
             }
-            // TODO: Check A / LEFT input → x -= speed * delta
-            else if(Gdx.input.isKeyPressed(Input.Keys.A) || (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))
             {
                 x -= speed * delta;
             }
-            // TODO: Check D / RIGHT input → x += speed * delta
-            else if(Gdx.input.isKeyPressed(Input.Keys.D) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+            if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))
             {
                 x += speed * delta;
             }
@@ -158,11 +155,10 @@ public class Player extends GameObject {
 
     @Override
     public void onCollision(Collidable other) {
-        // TODO: Check whether the other received by this method is an Item
         if (other instanceof Item){
-        // TODO: Print "Player touches items" then call collectItem((Item) other)
+            collectItem((Item) other);
             System.out.println("Player Touches Items");}
-        collectItem((Item) other);
+
     }
 
 }

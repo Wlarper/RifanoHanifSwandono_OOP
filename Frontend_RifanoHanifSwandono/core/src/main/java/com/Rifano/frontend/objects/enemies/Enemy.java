@@ -1,6 +1,6 @@
 package com.Rifano.frontend.objects.enemies;
 
-import com.Rifano.frontend.objects.GameObject; 
+import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.Player;
 import com.badlogic.gdx.graphics.Color;
 
@@ -27,15 +27,16 @@ public class Enemy extends GameObject {
     }
 
     public boolean takeDamage(int damage) {
-        if (this.hp <= 0) {
-            return false;
+        boolean wasAlive = isAlive();
+        this.hp -= damage;
+        if (this.hp < 0) {
+            this.hp = 0;
         }
-        setHp(getHp() - damage);
+        System.out.println(name + " took " + damage + " damage! HP: " + this.hp + "/" + this.maxHp);
 
-        System.out.println(this.name + " took " + damage + " damage !!! HP: " + this.hp + "/" + this.maxHp);
-
-        if (this.hp == 0) {
-            System.out.println(this.name + " was defeated YEAAHH!!!!");
+        if (wasAlive && this.hp == 0) {
+            System.out.println(name + " was defeated YEAHHHHHHH!");
+            destroy();
             return true;
         }
         return false;

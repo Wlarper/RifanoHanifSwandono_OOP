@@ -1,6 +1,7 @@
-package com.Rifano.frontend.objects.enemies; // CHANGED (Q1): was "com.Rifano.frontend", now moved into objects.enemies
+package com.Rifano.frontend.objects.enemies;
 
-import com.Rifano.frontend.objects.GameObject;
+import com.Rifano.frontend.objects.Collidable;
+import com.Rifano.frontend.objects.Player;
 import com.badlogic.gdx.graphics.Color;
 
 public class Boss extends Enemy {
@@ -14,9 +15,7 @@ public class Boss extends Enemy {
 
     @Override
     public void onCollision(Collidable other) {
-        // TODO: Check whether the other received by this method is a Player
         if (other instanceof Player){
-            // TODO: Print "Player touches Boss"
             System.out.println("Player Touches Boss");}
     }
 
