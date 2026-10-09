@@ -4,7 +4,7 @@ import com.Rifano.frontend.objects.items.ItemType;
 import com.Rifano.frontend.objects.enemies.Enemy;
 import com.Rifano.frontend.objects.items.Item;
 import com.Rifano.frontend.objects.bullets.Bullet;
-import com.Rifano.frontend.objects.BulletType;
+import com.Rifano.frontend.objects.bullets.BulletType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -17,7 +17,7 @@ public class Player extends GameObject {
     private long score;
 
     public Player(String name, int hp, int power, int spellCards) {
-        super(280, 40, 32, 32, 200f, Color.RED);
+        super(280, 40, 32, 48, 200f, Color.RED);
         this.name = name;
         this.hp = hp;
         this.power = power;
@@ -26,7 +26,7 @@ public class Player extends GameObject {
     }
 
     public Player(float x, float y, String name, int hp, int power, int spellCards) {
-        super(x, y, 32, 32, 200f, Color.RED);
+        super(x, y, 32, 48, 200f, Color.RED);
         this.name = name;
         this.hp = hp;
         this.power = power;
@@ -88,11 +88,12 @@ public class Player extends GameObject {
                     System.out.println(name + "collected LIFE item! HP:" + hp);
                 }
             }
-            item.destroy();
+
         } else {
             addScore(item.getScoreValue());
             System.out.println(name + " collected " + item.getItemType() + "!");
         }
+        item.destroy();
     }
 
 

@@ -6,8 +6,11 @@ import com.Rifano.frontend.objects.enemies.Fairy;
 import com.Rifano.frontend.objects.enemies.Boss;
 import com.Rifano.frontend.objects.items.Item;
 import com.Rifano.frontend.objects.items.ItemType;
+import com.Rifano.frontend.systems.AssetManager;
+import com.Rifano.frontend.systems.EntityFactory;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import java.util.ArrayList;
@@ -18,9 +21,9 @@ import java.util.Iterator;
 
 public class Main extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
-
+    private SpriteBatch batch;
     private Player player;
-    private Fairy fairy;
+    private List<Fairy> fairy;
     private Boss boss;
     private Item pointItem;
     private Item powerItem;
@@ -30,6 +33,7 @@ public class Main extends ApplicationAdapter {
     public void create() {
         shapeRenderer = new ShapeRenderer();
         entities = new ArrayList<>();
+        batch    = new SpriteBatch();
 
         player = new Player("Reimu Hakurei", 100, 15, 3);
         fairy = new Fairy("Stage 1 Fairy", 20);
@@ -38,39 +42,24 @@ public class Main extends ApplicationAdapter {
         powerItem = new Item(200, 450, 16, 16, 80f, ItemType.POWER, 500L);
         pointItem = new Item(320, 480, 12, 12, 120f, ItemType.POINT, 1000L);
 
+        AssetManager.getInstance().init();
+
+        player = EntityFactory.createPlayer(280, 40, "Reimu Hakurei", 100, 15, 3);
+        fairy RedFairy = EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue");
+        fairy BlueFairy = EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue");
+        boss = EntityFactory.createBoss(380, 400, "Rumia", 150);
+        powerItem = EntityFactory.createItem(200, 450, ItemType.POWER);
+        pointItem =EntityFactory.createItem(200, 450, ItemType.POWER);
+
         entities.add(player);
-        entities.add(fairy);
+        entities.add(Redfairy);
+        entities.add(BlueFairy);
         entities.add(boss);
         entities.add(pointItem);
         entities.add(powerItem);
-    }
-
-
-
-    @Override
-    public void dispose() {
-        if (shapeRenderer != null) {
-            shapeRenderer.dispose();
-        }
-    }
-
-    public <T extends GameObject> void updateAndClean(List<T> list, float delta, float screenWidth, float screenHeight) {
-        Iterator<T> listiterator = list.iterator();
-        while (listiterator.hasNext()) {
-            T obj = listiterator.next();
-            if (obj.isOffScreen(screenWidth, screenHeight) || obj.isDestroyed()){
-                System.out.println("Removed via Generic Iterator: " + obj.getClass().getSimpleName());
-            }
-        }
-
-        // 2. While there are still elements available (hasNext()):
-        //    a. Get the current element using next() and store it in a variable of type T.
-        //    b. Call update(delta) on the element.
-        //    c. If the element is off-screen (isOffScreen(screenWidth, screenHeight))
-        //       OR isDestroyed():
-        //       - Display the message: "Removed via Generic Iterator: " + [entity class name, using getClass().getSimpleName()]
-        //       - Remove the element from the list using the Iterator's method
-        //         (NOT list.remove()!).
+        // TODO 2:
+        fairy = new ArrayList<>();
+        entities = new ArrayList<>();
     }
 
     @Override
@@ -78,7 +67,7 @@ public class Main extends ApplicationAdapter {
         float delta = Gdx.graphics.getDeltaTime();
         // TODO 1: If the Z key was just pressed, add a new bullet from player.shootBullet()
         if(Gdx.input.isKeyPressed(Input.Keys.Z)){
-            player.shootBullet();
+            entities.add(player.shootBullet());
         }
         // to the entities list.
         // Clue: Gdx.input.isKeyJustPressed()
@@ -113,7 +102,36 @@ public class Main extends ApplicationAdapter {
             // If so, call entity.render(shapeRenderer);
         }
         shapeRenderer.end();
+        ScreenUtils.clear(0.1f, 0.1f, 0.15f, 1f);
+
+        batch.begin();
+        for (GameObject entity : entities) {
+            if (!entity.isDestroyed()) {
+                // TODO: Call each entity's .render() method with the SpriteBatch as its argument
+                entity.render(batch);
+            }
+        }
+        batch.end();
     }
+    public <T extends GameObject> void updateAndClean(List<T> list, float delta, float screenWidth, float screenHeight) {
+        Iterator<T> listiterator = list.iterator();
+        while (listiterator.hasNext()) {
+            T obj = listiterator.next();
+            obj.update(delta);
+            if (obj.isOffScreen(screenWidth, screenHeight) || obj.isDestroyed()){
+                System.out.println("Removed via Generic Iterator: " + obj.getClass().getSimpleName());
+                listiterator.remove();
+            }
+        }
 
-
-}
+    }
+    @Override
+    public void dispose() {
+        if (batch != null) {
+            batch.dispose();
+        }
+        AssetManager.getInstance,dispose();
+        // TODO: Call dispose on AssetManager to release the loaded Textures as well.
+    }
+    }
+    }

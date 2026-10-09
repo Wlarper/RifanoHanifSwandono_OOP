@@ -1,6 +1,9 @@
 package com.Rifano.frontend.objects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -11,6 +14,9 @@ public abstract class GameObject implements com.Rifano.frontend.objects.Collidab
     protected float height;
     protected float speed;
     protected Color color;
+    protected TextureRegion sprite;
+    protected Animation<TextureRegion> animation;
+    protected float stateTime = 0f;
 
     public GameObject(float x, float y, float width, float height, float speed, Color color) {
         this.x = x;
@@ -22,6 +28,7 @@ public abstract class GameObject implements com.Rifano.frontend.objects.Collidab
 
     }
     public void update(float delta) {
+        stateTime += delta;
     }
 
     // render Method
@@ -29,6 +36,16 @@ public abstract class GameObject implements com.Rifano.frontend.objects.Collidab
         if (shapeRenderer != null && color != null && active) {
             shapeRenderer.setColor(this.color);
             shapeRenderer.rect(this.x, this.y, this.width, this.height);
+        }
+    }
+    public void render(SpriteBatch batch) {
+        if (batch != null && active) {
+            if (animation != null) {
+                TextureRegion currentFrame = animation.getKeyFrame(stateTime, true);
+                batch.draw(currentFrame, x, y, width, height);
+            } else if (sprite != null) {
+                batch.draw(sprite, x, y, width, height);
+            }
         }
     }
     @Override
@@ -65,6 +82,9 @@ public abstract class GameObject implements com.Rifano.frontend.objects.Collidab
     public Color getColor(){
         return color;
     }
+    public TextureRegion getSprite() {
+        return sprite;
+    }
     public void setColor(Color color){
         this.color=color;
     }
@@ -83,7 +103,7 @@ public abstract class GameObject implements com.Rifano.frontend.objects.Collidab
     protected boolean active = true;
 
     public boolean isDestroyed() {
-        return active == false;
+        return !active;
     }
 
     public void destroy() {

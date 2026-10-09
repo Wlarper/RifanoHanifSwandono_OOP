@@ -2,7 +2,6 @@ package com.Rifano.frontend.objects.bullets;
 
 import com.Rifano.frontend.objects.Collidable;
 import com.Rifano.frontend.objects.GameObject;
-import com.Rifano.frontend.objects.BulletType;
 import com.Rifano.frontend.objects.enemies.Enemy;
 import com.badlogic.gdx.graphics.Color;
 
@@ -40,7 +39,7 @@ public class Bullet extends GameObject {
     @Override
     public void onCollision(Collidable other) {
         if (other instanceof Enemy enemy) {
-            System.out.println("Bullet hit" + enemy.getName() + "Bullet hit" + damage );
+            System.out.println("Bullet hit " + enemy.getName() + " for " + damage + " DMG!");
             enemy.takeDamage(damage);
             destroy();
 

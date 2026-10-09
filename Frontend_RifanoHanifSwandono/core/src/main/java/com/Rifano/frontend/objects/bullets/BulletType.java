@@ -1,4 +1,4 @@
-package com.Rifano.frontend.objects;
+package com.Rifano.frontend.objects.bullets;
 
 public enum BulletType {
     DANMAKU,
