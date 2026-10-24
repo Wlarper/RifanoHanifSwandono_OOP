@@ -11,14 +11,14 @@ public class Bullet extends GameObject {
 
     // Constructor with default speed (400f)
     public Bullet(float x, float y, BulletType bulletType, int damage) {
-        super(x, y, 8, 16, 400f, Color.YELLOW);
+        super(x, y, 16, 16, 400f, Color.YELLOW);
         this.bulletType = bulletType;
         this.damage = damage;
     }
 
     // Overloaded constructor with custom speed
     public Bullet(float x, float y, float speed, BulletType bulletType, int damage) {
-        super(x, y, 8, 16, speed, Color.YELLOW);
+        super(x, y, 16, 16, speed, Color.YELLOW);
         this.bulletType = bulletType;
         this.damage = damage;
     }

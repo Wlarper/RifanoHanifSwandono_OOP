@@ -70,7 +70,7 @@ public class AssetManager {
             Animation<TextureRegion> anim = new Animation<>(frameDuration, frames);
             anim.setPlayMode(playMode);
             animationMap.put(key, anim);
-            textureRegionMap.put(key, frames[0]); // first frame as the default sprite
+            textureRegionMap.put(key, frames[0]);
         }
     }
     // Overload for flipped animations (e.g., facing left using a horizontal flip)
@@ -112,16 +112,24 @@ public class AssetManager {
     public void init() {
 
         // TODO: Register Reimu Hakurei's idle animation (player.png: 32x48 per cell)
-        registerAnimationFromSheet("player_idle", "player.png", 32, 48, 0, 8, 0.1f);
+        registerAnimationFromSheet("player_idle", "player.png", 32, 48, 0, 8, 0.125f);
+        registerAnimationFromSheet("player_left", "player.png", 32, 48, 1, 4, 0.12f);
+        registerAnimationFromSheet("player_right", "player.png", 32, 48, 2, 4, 0.12f);
+
 
         // TODO: Register the Boss's idle animation (rumia.png: 64x64 per cell)
-        registerAnimationFromSheet("boss_idle", "rumia.png", 64, 64, 0, 4, 0.15f);
+        registerAnimationFromSheet("boss_idle", "rumia.png", 64, 64, 0, 4, 0.2f);
+        registerAnimationFromSheet("boss_left", "rumia.png", 64, 64, 1, 0, 4, 0.15f, Animation.PlayMode.REVERSED);
+        registerAnimationFromSheet("boss_right", "rumia.png", 64, 64, 2, 0, 4, 0.15f, Animation.PlayMode.NORMAL);
 
         // TODO: Register the Fairy animations
-        registerAnimationFromSheet("fairy_idle", "fairy.png", 32, 32, 0, 4, 0.1f);
+        registerAnimationFromSheet("fairy_idle_red", "fairy.png", 32, 32, 1, 8, 0.125f);
+        registerAnimationFromSheet("fairy_idle_blue", "fairy.png", 32, 32, 0, 8, 0.125f);
 
         // TODO: Register the enemy bullet (bullets_small.png: 16x16 cell at row 2, column 3)
         registerRegionFromSheet("bullet_danmaku", "bullets_small.png", 16, 16, 2, 3);
+        registerRegionFromSheet("bullet_amulet", "amulet_reimu.png", 16, 16, 0, 0);
+        registerRegionFromSheet("bullet_amulet_homing", "amulet_reimu.png", 16, 16, 1, 0);
 
         // TODO: Register the 4 Item variants (items.png: 16x16 per cell)
         registerRegionFromSheet("item_power", "items.png", 16, 16, 0, 0);

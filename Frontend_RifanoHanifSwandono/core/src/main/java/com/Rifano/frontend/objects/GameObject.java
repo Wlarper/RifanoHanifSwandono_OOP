@@ -85,6 +85,15 @@ public abstract class GameObject implements com.Rifano.frontend.objects.Collidab
     public TextureRegion getSprite() {
         return sprite;
     }
+    public void setSprite(TextureRegion sprite) {
+        this.sprite = sprite;
+    }
+    public Animation<TextureRegion> getAnimation() {
+        return animation;
+    }
+    public void setAnimation(Animation<TextureRegion> animation) {
+        this.animation = animation;
+    }
     public void setColor(Color color){
         this.color=color;
     }

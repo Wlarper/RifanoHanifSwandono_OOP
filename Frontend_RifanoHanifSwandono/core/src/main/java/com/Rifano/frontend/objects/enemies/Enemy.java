@@ -3,6 +3,7 @@ package com.Rifano.frontend.objects.enemies;
 import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.Player;
 import com.badlogic.gdx.graphics.Color;
+import com.Rifano.frontend.systems.AudioSystem;
 
 public class Enemy extends GameObject {
     protected String name;
@@ -36,6 +37,7 @@ public class Enemy extends GameObject {
 
         if (wasAlive && this.hp == 0) {
             System.out.println(name + " was defeated YEAHHHHHHH!");
+            AudioSystem.getInstance().playSound("enemy_die");
             destroy();
             return true;
         }
