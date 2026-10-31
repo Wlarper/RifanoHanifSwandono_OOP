@@ -6,3 +6,5 @@ public enum BulletType {
     LASER,
     MASTER_SPARK
 }
+// amuklet
+//danmaku

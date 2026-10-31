@@ -30,16 +30,11 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
-        // TODO 1:
         batch = new SpriteBatch();
-        // TODO 2:
         fairy = new ArrayList<>();
         entities = new ArrayList<>();
-        // TODO 3:
         AssetManager.getInstance().init();
         AudioSystem.getInstance().init();
-
-        // TODO 4:
         player = EntityFactory.createPlayer(280, 40, "Reimu Hakurei", 100, 15, 3);
         Fairy redFairy = EntityFactory.createFairy(150, 380, "Red Fairy", 20);
         Fairy blueFairy = EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue");
@@ -48,8 +43,6 @@ public class Main extends ApplicationAdapter {
         boss = EntityFactory.createBoss(380, 400, "Rumia", 150);
         powerItem = EntityFactory.createItem(200, 450, ItemType.POWER);
         pointItem = EntityFactory.createItem(320, 480, ItemType.POINT);
-
-        // TODO 5:
         entities.add(player);
         entities.addAll(fairy);
         entities.add(boss);
@@ -61,14 +54,10 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
-        // TODO 1: If the Z key was just pressed, add a new bullet from player.shootBullet()
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
             entities.add(player.shootBullet());
         }
-        // TODO 2: Call updateAndClean(entities, delta, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
         updateAndClean(entities, delta, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        // TODO 3. Collision detection between entities (skip entities that are already destroyed)
         for (int i = 0; i < entities.size(); i++) {
             for (int j = i + 1; j < entities.size(); j++) {
                 GameObject a = entities.get(i);
@@ -87,7 +76,6 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         for (GameObject entity : entities) {
             if (!entity.isDestroyed()) {
-                // TODO: Call each entity's .render() method with the SpriteBatch as its argument
                 entity.render(batch);
             }
         }
@@ -110,7 +98,6 @@ public class Main extends ApplicationAdapter {
         if (batch != null) {
             batch.dispose();
         }
-        // TODO: Call dispose on AssetManager to release the loaded Textures as well.
         AssetManager.getInstance().dispose();
         AudioSystem.getInstance().dispose();
     }

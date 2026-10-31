@@ -13,6 +13,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.Rifano.frontend.systems.AssetManager;
 import com.Rifano.frontend.systems.EntityFactory;
 import com.Rifano.frontend.systems.AudioSystem;
+import com.badlogic.gdx.math.Rectangle;
+import com.Rifano.frontend.objects.patterns.ShootingPattern;
+import com.Rifano.frontend.systems.BulletManager;
 
 public class Player extends GameObject {
     private String name;
@@ -21,6 +24,7 @@ public class Player extends GameObject {
     private int spellCards;
     private long score;
     private int currentDir = 0;
+    private ShootingPattern shootingPattern;
 
     public Player(String name, int hp, int power, int spellCards) {
         super(280, 40, 32, 48, 200f, Color.RED);
@@ -56,11 +60,18 @@ public class Player extends GameObject {
         target.takeDamage(damage);
     }
 
-    public Bullet shootBullet() {
+    public void shootBullet(BulletManager bulletManager) {
+        if (bulletManager == null) {
+            return;
+        }
         int damage = 10 + power;
         System.out.println(name + " shoots bullet dealing " + damage + " DMG!");
         AudioSystem.getInstance().playSound("player_shoot");
-        return EntityFactory.createPlayerBullet(x + (width / 2) - 4, y + height, damage);
+        if (shootingPattern != null) {
+            shootingPattern.execute(x + width / 2f - 8f, y + height, bulletManager, true);
+        } else {
+            bulletManager.spawnPlayerBullet(x + width / 2f - 8f, y + height, 0f, 400f, damage);
+        }
     }
 
     public void addScore(long points) {
@@ -138,6 +149,24 @@ public class Player extends GameObject {
 
     public long getScore() {
         return score;
+    }
+
+    @Override
+    public Rectangle getCoreHitbox() {
+        return new Rectangle(x + (width / 2f) - 4f, y + (height / 2f) - 4f, 8f, 8f);
+    }
+
+    @Override
+    public Rectangle getGrazeHitbox() {
+        return new Rectangle(x, y, width, height);
+    }
+
+    public ShootingPattern getShootingPattern() {
+        return shootingPattern;
+    }
+
+    public void setShootingPattern(ShootingPattern shootingPattern) {
+        this.shootingPattern = shootingPattern;
     }
 
     @Override
