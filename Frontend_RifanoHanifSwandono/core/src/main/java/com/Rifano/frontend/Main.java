@@ -8,6 +8,8 @@ import com.Rifano.frontend.objects.items.Item;
 import com.Rifano.frontend.objects.items.ItemType;
 import com.Rifano.frontend.systems.AssetManager;
 import com.Rifano.frontend.systems.AudioSystem;
+import com.Rifano.frontend.systems.BulletManager;
+import com.Rifano.frontend.systems.CollisionReferee;
 import com.Rifano.frontend.systems.EntityFactory;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -27,6 +29,9 @@ public class Main extends ApplicationAdapter {
     private Item pointItem;
     private Item powerItem;
     private List<GameObject> entities;
+    private BulletManager bulletManager;
+    private CollisionReferee collisionReferee;
+    private float enemyShootTimer = 0f;
 
     @Override
     public void create() {
@@ -35,6 +40,8 @@ public class Main extends ApplicationAdapter {
         entities = new ArrayList<>();
         AssetManager.getInstance().init();
         AudioSystem.getInstance().init();
+        bulletManager = new BulletManager();
+        collisionReferee = new CollisionReferee();
         player = EntityFactory.createPlayer(280, 40, "Reimu Hakurei", 100, 15, 3);
         Fairy redFairy = EntityFactory.createFairy(150, 380, "Red Fairy", 20);
         Fairy blueFairy = EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue");
@@ -55,32 +62,31 @@ public class Main extends ApplicationAdapter {
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-            entities.add(player.shootBullet());
-        }
+            player.shootBullet(bulletManager);}
+        updateEnemyScheduler(delta);
         updateAndClean(entities, delta, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        for (int i = 0; i < entities.size(); i++) {
-            for (int j = i + 1; j < entities.size(); j++) {
-                GameObject a = entities.get(i);
-                GameObject b = entities.get(j);
-
-                if (!a.isDestroyed() && !b.isDestroyed()) {
-                    if (a.getCoreHitbox().overlaps(b.getCoreHitbox())) {
-                        a.onCollision(b);
-                        b.onCollision(a);
-                    }
-                }
-            }
-        }
-
+        bulletManager.update(delta, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        collisionReferee.resolveCollisions(player, entities, bulletManager);
         ScreenUtils.clear(0.1f, 0.1f, 0.15f, 1f);
+
         batch.begin();
         for (GameObject entity : entities) {
             if (!entity.isDestroyed()) {
                 entity.render(batch);
             }
         }
+        bulletManager.render(batch);
         batch.end();
     }
+
+    private void updateEnemyScheduler(float delta) {
+        enemyShootTimer += delta;
+        if (enemyShootTimer >= 1.5f) {
+            boss.shootBullet(bulletManager);
+            enemyShootTimer = 0f;
+        }
+    }
+
     public <T extends GameObject> void updateAndClean(List<T> list, float delta, float screenWidth, float screenHeight) {
         Iterator<T> listiterator = list.iterator();
         while (listiterator.hasNext()) {
