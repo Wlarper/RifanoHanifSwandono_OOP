@@ -13,11 +13,20 @@ public class CollisionReferee {
 
     public void resolveCollisions(Player player, List<GameObject> entities, BulletManager bulletManager) {
         if (player == null || entities == null || bulletManager == null) return;
+
         List<GameObject> newDrops = new ArrayList<>();
 
-        for (Bullet bullet : bulletManager.getActivePlayerBullets()) {
+        for (Bullet bullet : bulletManager.getActiveEnemyBullets()) {
             if (bullet.isDestroyed()) continue;
             for(GameObject entity : entities){
+                if (!player.isDestroyed()) {
+                    if (bullet.getCoreHitbox().overlaps(player.getCoreHitbox())) {
+                        if (!player.isInvulnerable());{
+                            System.out.println("[CollisionReferee] CORE HIT! Enemy Bullet hit " + player.getName() + " for " + bullet.getDamage() + " DMG!");
+                        }
+                    }
+
+                    }
                 if(entity instanceof Enemy enemy && !enemy.isDestroyed()){
                     if(bullet.getCoreHitbox().overlaps(enemy.getCoreHitbox())){
                         boolean defeated = enemy.takeDamage((bullet.getDamage()));
@@ -41,22 +50,23 @@ public class CollisionReferee {
                 }
                 else if (!bullet.hasBeenGrazed() && bullet.getCoreHitbox().overlaps(player.getGrazeHitbox())) {
                     bullet.setGrazed(true);
-                    player.addScore(50);
+                    // TODO 4: Replace player.addScore(50) with a call to the player's addGraze() method
                     System.out.println("[CollisionReferee] GRAZE! " + player.getName() + " grazed an enemy bullet (+50 pts)!");
                 }
+            }
             }
         }
         for (GameObject entity : entities) {
             if (entity.isDestroyed()) continue;
             if (entity instanceof Item item) {
-                if (item.getCoreHitbox().overlaps(player.getCoreHitbox())
-                    || item.getCoreHitbox().overlaps(player.getGrazeHitbox())) {
+                if (item.getCoreHitbox().overlaps(player.getCoreHitbox()) || item.getCoreHitbox().overlaps(player.getGrazeHitbox())) {
                     player.collectItem(item);
                 }
             }
             else if (entity instanceof Enemy enemy) {
                 if (player.getCoreHitbox().overlaps(enemy.getCoreHitbox())) {
-                    player.takeDamage(10);
+                    System.out.println("[CollisionReferee] CORE COLLISION! Player collided with " + enemy.getName() + "!");
+                    player.takeDamage(100, bulletManager, entities);
                 }
             }
         }

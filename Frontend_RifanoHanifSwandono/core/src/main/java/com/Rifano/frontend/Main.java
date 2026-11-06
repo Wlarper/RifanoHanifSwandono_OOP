@@ -1,5 +1,6 @@
 package com.Rifano.frontend;
 
+import com.Rifano.frontend.commands.InputHandler;
 import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.Player;
 import com.Rifano.frontend.objects.enemies.Fairy;
@@ -11,6 +12,7 @@ import com.Rifano.frontend.systems.AudioSystem;
 import com.Rifano.frontend.systems.BulletManager;
 import com.Rifano.frontend.systems.CollisionReferee;
 import com.Rifano.frontend.systems.EntityFactory;
+import com.Rifano.frontend.ui.GameHUD;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -31,6 +33,8 @@ public class Main extends ApplicationAdapter {
     private List<GameObject> entities;
     private BulletManager bulletManager;
     private CollisionReferee collisionReferee;
+    private InputHandler inputHandler;
+    private GameHUD gameHUD;
     private float enemyShootTimer = 0f;
 
     @Override
@@ -42,19 +46,27 @@ public class Main extends ApplicationAdapter {
         AudioSystem.getInstance().init();
         bulletManager = new BulletManager();
         collisionReferee = new CollisionReferee();
-        player = EntityFactory.createPlayer(280, 40, "Reimu Hakurei", 100, 15, 3);
-        Fairy redFairy = EntityFactory.createFairy(150, 380, "Red Fairy", 20);
-        Fairy blueFairy = EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue");
-        fairy.add(redFairy);
-        fairy.add(blueFairy);
-        boss = EntityFactory.createBoss(380, 400, "Rumia", 150);
-        powerItem = EntityFactory.createItem(200, 450, ItemType.POWER);
-        pointItem = EntityFactory.createItem(320, 480, ItemType.POINT);
+        inputHandler = new InputHandler();
+        gameHUD = new GameHUD();
+
+
+        player = EntityFactory.createPlayer(200, 50, "Reimu Hakurei", 100, 15, 3);
+        fairy.add(EntityFactory.createFairy(150, 380, "Red Fairy", 20));
+        fairy.add(EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue"));
+        boss = EntityFactory.createBoss(250, 400, "Rumia", 150);
+        powerItem = EntityFactory.createItem(180, 450, ItemType.POWER);
+        pointItem = EntityFactory.createItem(220, 480, ItemType.POINT);
+
+        player.registerObserver(gameHUD);
+
         entities.add(player);
         entities.addAll(fairy);
         entities.add(boss);
-        entities.add(pointItem);
         entities.add(powerItem);
+        entities.add(pointItem);
+        inputHandler.setEntities(entities);
+
+
 
     }
 
@@ -77,6 +89,25 @@ public class Main extends ApplicationAdapter {
         }
         bulletManager.render(batch);
         batch.end();
+    }
+
+    private void restartGame() {
+        System.out.println("[Main] Restarting game...");
+        entities.clear();
+        bulletManager.clearEnemyBullets();
+        bulletManager.clearPlayerBullets();
+        entities.add(player);
+        player.resetGame();
+        fairy.clear();
+        fairy.add(EntityFactory.createFairy(150, 380, "Red Fairy", 20));
+        fairy.add(EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue"));
+        boss = EntityFactory.createBoss(250, 400, "Rumia", 150);
+        powerItem = EntityFactory.createItem(180, 450, ItemType.POWER);
+        pointItem = EntityFactory.createItem(220, 480, ItemType.POINT);
+        entities.addAll(fairy);
+        entities.add(boss);
+        entities.add(powerItem);
+        entities.add(pointItem);
     }
 
     private void updateEnemyScheduler(float delta) {

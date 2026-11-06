@@ -1,11 +1,16 @@
 package com.Rifano.frontend.systems;
 
-import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.bullets.Bullet;
 import com.Rifano.frontend.objects.bullets.BulletType;
+import com.Rifano.frontend.objects.GameObject;
+import com.Rifano.frontend.objects.items.Item;
+import com.Rifano.frontend.objects.items.ItemType;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class BulletManager {
     // 1. Pool Queues for Object Recycling (Object Pool Pattern)
@@ -22,57 +27,78 @@ public class BulletManager {
         activePlayerBullets = new ArrayList<>();
         activeEnemyBullets = new ArrayList<>();
     }
-
-    // Borrowing Player Bullet from Pool (5 Points)
     public Bullet spawnPlayerBullet(float x, float y, float vx, float vy, int damage) {
         Bullet bullet;
-        if (!playerBulletPool.isEmpty()){
-            bullet=playerBulletPool.poll();
+        if (!playerBulletPool.isEmpty()) {
+            bullet = playerBulletPool.poll();
+        } else {
+            bullet = EntityFactory.createPlayerBullet(x, y, damage);
         }
-        else {
-            bullet =EntityFactory.createPlayerBullet(x, y, damage);
-        }
-        bullet.init(x, y, vx, vy, BulletType.AMULET,damage, true);
+        bullet.init(x, y, vx, vy, BulletType.AMULET, damage, true);
         activePlayerBullets.add(bullet);
         return bullet;
     }
-
-    // Borrowing Enemy Bullet from Pool (5 Points)
     public Bullet spawnEnemyBullet(float x, float y, float vx, float vy, int damage) {
         Bullet bullet;
-        if(!enemyBulletPool.isEmpty()){
-            bullet=enemyBulletPool.poll();
+        if (!enemyBulletPool.isEmpty()) {
+            bullet = enemyBulletPool.poll();
+        } else {
+            bullet = EntityFactory.createEnemyBullet(x, y, damage);
         }
-        else {
-            bullet= EntityFactory.createEnemyBullet(x,y,damage);
-        }
-        bullet.init(x,y,vx,vy, BulletType.DANMAKU,damage,true);
+        bullet.init(x, y, vx, vy, BulletType.DANMAKU, damage, false);
         activeEnemyBullets.add(bullet);
         return bullet;
     }
 
     public void update(float delta, float screenWidth, float screenHeight) {
-            Iterator<Bullet> playerIterator = activePlayerBullets.iterator();
-            while (playerIterator.hasNext()) {
-                Bullet bullet = playerIterator.next();
-                bullet.update(delta);
-                if (bullet.isOffScreen(screenWidth, screenHeight) || bullet.isDestroyed()){
-                    bullet.destroy();
-                    playerIterator.remove();
-                    playerBulletPool.offer(bullet);
-                }
+        Iterator<Bullet> playerIterator = activePlayerBullets.iterator();
+        while (playerIterator.hasNext()) {
+            Bullet bullet = playerIterator.next();
+            bullet.update(delta);
+            if (bullet.isOffScreen(screenWidth, screenHeight) || bullet.isDestroyed()) {
+                bullet.destroy();
+                playerIterator.remove();
+                playerBulletPool.offer(bullet);
             }
+        }
         Iterator<Bullet> enemyIterator = activeEnemyBullets.iterator();
         while (enemyIterator.hasNext()) {
             Bullet bullet = enemyIterator.next();
-            if (bullet.isOffScreen(screenWidth, screenHeight) || bullet.isDestroyed()){
+            bullet.update(delta);
+            if (bullet.isOffScreen(screenWidth, screenHeight) || bullet.isDestroyed()) {
                 bullet.destroy();
                 enemyIterator.remove();
-                enemyBulletPool.offer((bullet));
+                enemyBulletPool.offer(bullet);
             }
         }
-
     }
+
+    public void clearEnemyBullets(List<GameObject> entities) {
+        Iterator<Bullet> iter = activeEnemyBullets.iterator();
+        while (iter.hasNext()) {
+            Bullet bullet = iter.next();
+            if (entities != null) {
+                Item pointDrop = EntityFactory.createItem(bullet.getX(), bullet.getY(), ItemType.POINT);
+                entities.add(pointDrop);
+            }
+            bullet.destroy();
+            iter.remove();
+            enemyBulletPool.offer(bullet);
+        }
+    }
+    public void clearEnemyBullets() {
+        clearEnemyBullets(null);
+    }
+    public void clearPlayerBullets() {
+        Iterator<Bullet> pIter = activePlayerBullets.iterator();
+        while (pIter.hasNext()) {
+            Bullet bullet = pIter.next();
+            bullet.destroy();
+            pIter.remove();
+            playerBulletPool.offer(bullet);
+        }
+    }
+
 
     public void render(SpriteBatch batch) {
         for (Bullet b : activePlayerBullets) {
