@@ -20,8 +20,8 @@ import com.Rifano.frontend.systems.BulletManager;
 import com.Rifano.frontend.objects.GameObject;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.Rifano.frontend.observers.GameObserver;
-import com.Rifano.frontend.observers.ArrayList;
-import com.Rifano.frontend.observers.List;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class Player extends GameObject {
     private float shootTimer = 0.1f;
     private float shootCooldown = 0.1f;
     private float invulnerableTimer = 0f;
-    private List<Observer> observers = new ArrayList<>();
+    private List<GameObserver> observers = new ArrayList<>();
 
     public Player(String name, int hp, int power, int spellCards) {
         super(280, 40, 32, 48, 200f, Color.RED);

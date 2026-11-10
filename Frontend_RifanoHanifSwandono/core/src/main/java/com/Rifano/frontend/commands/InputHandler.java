@@ -42,29 +42,24 @@ public class InputHandler {
     public List<Command> handleInput(float delta) {
         activeCommands.clear();
         if (Gdx.input == null) return activeCommands;
-        // TODO:
         boolean isFocusHeld = Gdx.input.isKeyPressed(keyFocus) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
-        // - Check whether keyFocus or SHIFT_RIGHT is currently pressed (isKeyPressed).
-        // - Store the result in a boolean variable `isFocusHeld`.
         activeCommands.add(isFocusHeld ? focusOn : focusOff);
         float dx = 0;
         float dy = 0;
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) dy += 1;
-            if (Gdx.input.isKeyPressed(Input.Keys.S))  dy -= 1;
-            if (Gdx.input.isKeyPressed(Input.Keys.A))  dx -= 1;
-            if (Gdx.input.isKeyPressed(Input.Keys.D))  dx += 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) dy += 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) dy -= 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) dx -= 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) dx += 1;
         float speedMult = isFocusHeld ? 0.45f : 1.0f;
         moveCommand.set(dx * delta * speedMult, dy * delta * speedMult);
-        activeCommands.add((moveCommand));
-
-            if (Gdx.input.isKeyPressed(keyShoot)) {
-                activeCommands.add((moveCommand));
-            }
-            if (Gdx.input.isKeyJustPressed(keyBomb)) {
-                activeCommands.add((moveCommand));
-            }
-    }
+        activeCommands.add(moveCommand);
+        if (Gdx.input.isKeyPressed(keyShoot)) {
+            activeCommands.add(shootCommand);
+        }
+        if (Gdx.input.isKeyJustPressed(keyBomb)) {
+            activeCommands.add(bombCommand);
+        }
         return activeCommands;
     }
-
+}
 

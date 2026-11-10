@@ -1,5 +1,6 @@
 package com.Rifano.frontend;
 
+import com.Rifano.frontend.commands.Command;
 import com.Rifano.frontend.commands.InputHandler;
 import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.Player;
@@ -65,22 +66,23 @@ public class Main extends ApplicationAdapter {
         entities.add(powerItem);
         entities.add(pointItem);
         inputHandler.setEntities(entities);
-
-
-
     }
 
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-            player.shootBullet(bulletManager);}
+        if (Gdx.input != null && Gdx.input.isKeyJustPressed(Input.Keys.R) && player.isGameOver()) {
+            restartGame();
+        }
+        List<Command> commands = inputHandler.handleInput(delta);
+        for (Command command : commands) {
+            command.execute(player, bulletManager);
+        }
         updateEnemyScheduler(delta);
-        updateAndClean(entities, delta, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        bulletManager.update(delta, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        updateAndClean(entities, delta, 416, 560);
+        bulletManager.update(delta, 416, 560);
         collisionReferee.resolveCollisions(player, entities, bulletManager);
         ScreenUtils.clear(0.1f, 0.1f, 0.15f, 1f);
-
         batch.begin();
         for (GameObject entity : entities) {
             if (!entity.isDestroyed()) {
@@ -88,7 +90,11 @@ public class Main extends ApplicationAdapter {
             }
         }
         bulletManager.render(batch);
+        gameHUD.render(batch);
         batch.end();
+        // 8. Render UI border frame lines & Focus Mode Core Hitbox indicator
+        gameHUD.renderBackground();
+        player.renderFocusIndicator(gameHUD.getShapeRenderer());
     }
 
     private void restartGame() {
@@ -123,7 +129,7 @@ public class Main extends ApplicationAdapter {
         while (listiterator.hasNext()) {
             T obj = listiterator.next();
             obj.update(delta);
-            if (obj.isOffScreen(screenWidth, screenHeight) || obj.isDestroyed()){
+            if (obj.isOffScreen(screenWidth, screenHeight) || obj.isDestroyed()) {
                 System.out.println("Removed via Generic Iterator: " + obj.getClass().getSimpleName());
                 listiterator.remove();
             }
@@ -135,7 +141,11 @@ public class Main extends ApplicationAdapter {
         if (batch != null) {
             batch.dispose();
         }
+        if (gameHUD != null) {
+            gameHUD.dispose();
+        }
         AssetManager.getInstance().dispose();
         AudioSystem.getInstance().dispose();
+
     }
 }
