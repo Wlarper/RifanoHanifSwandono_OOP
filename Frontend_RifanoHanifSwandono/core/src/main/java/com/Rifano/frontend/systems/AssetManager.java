@@ -126,8 +126,13 @@ public class AssetManager {
         registerAnimationFromSheet("fairy_idle_red", "fairy.png", 32, 32, 1, 8, 0.125f);
         registerAnimationFromSheet("fairy_idle_blue", "fairy.png", 32, 32, 0, 8, 0.125f);
 
-        // TODO: Register the enemy bullet (bullets_small.png: 16x16 cell at row 2, column 3)
-        registerRegionFromSheet("bullet_danmaku", "bullets_small.png", 16, 16, 2, 3);
+        // [CHANGED] Problem 1: Register Danmaku bullet texture color variants
+        registerRegionFromSheet("bullet_danmaku",        "bullets_small.png", 16, 16, 2, 3);
+        registerRegionFromSheet("bullet_danmaku_blue",   "bullets_small.png", 16, 16, 2, 3);
+        registerRegionFromSheet("bullet_danmaku_red",    "bullets_small.png", 16, 16, 2, 6);
+        registerRegionFromSheet("bullet_danmaku_purple", "bullets_small.png", 16, 16, 2, 4);
+        registerRegionFromSheet("bullet_danmaku_orange", "bullets_small.png", 16, 16, 2, 15);
+        registerRegionFromSheet("bullet_danmaku_green",  "bullets_small.png", 16, 16, 2, 10);
         registerRegionFromSheet("bullet_amulet", "amulet_reimu.png", 16, 16, 0, 0);
         registerRegionFromSheet("bullet_amulet_homing", "amulet_reimu.png", 16, 16, 1, 0);
 

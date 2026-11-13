@@ -52,9 +52,9 @@ public class Main extends ApplicationAdapter {
 
 
         player = EntityFactory.createPlayer(200, 50, "Reimu Hakurei", 100, 15, 3);
-        fairy.add(EntityFactory.createFairy(150, 380, "Red Fairy", 20));
-        fairy.add(EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue"));
-        boss = EntityFactory.createBoss(250, 400, "Rumia", 150);
+        boss = EntityFactory.createBoss(200, 420, "Rumia", 150);
+        entities.addAll(fairy);
+        boss = EntityFactory.createBoss(200, 420, "Rumia", 150);
         powerItem = EntityFactory.createItem(180, 450, ItemType.POWER);
         pointItem = EntityFactory.createItem(220, 480, ItemType.POINT);
 
@@ -67,6 +67,12 @@ public class Main extends ApplicationAdapter {
         entities.add(pointItem);
         inputHandler.setEntities(entities);
     }
+
+    bulletManager.setEntities(entities);
+// TODO (3 points): Inject initial strategies into Boss Rumia
+boss.setMovementPattern(new TargetPointMovement(200f, 420f, 150f));
+boss.setShootingPattern(new SpreadShot(220f, 5, 25f, 10, player, "bullet_danmaku_red"));
+
 
     @Override
     public void render() {

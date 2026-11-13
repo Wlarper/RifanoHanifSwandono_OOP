@@ -10,6 +10,7 @@ import com.Rifano.frontend.objects.enemies.Boss;
 import com.Rifano.frontend.objects.enemies.Fairy;
 import com.Rifano.frontend.objects.items.Item;
 import com.Rifano.frontend.objects.items.ItemType;
+import com.Rifano.frontend.objects.patterns.bulletStrategy.HomingBulletMovement;
 
 public class EntityFactory {
 
@@ -42,12 +43,17 @@ public class EntityFactory {
         return createPlayerBullet(x, y, damage, "bullet_amulet");
     }
 
-    public static Bullet createEnemyBullet(float x, float y, int damage) {
+    public static Bullet createEnemyBullet(float x, float y, int damage, String spriteKey) { // Add String spriteKey as a parameter
+        String key = (spriteKey != null) ? spriteKey : "bullet_danmaku"; // Add local String variable key
+        TextureRegion sprite = AssetManager.getInstance().getTextureRegion(key); // Change "bullet_danmaku" to the key variable
         Bullet bullet = new Bullet(x, y, 0f, BulletType.DANMAKU, damage);
-        TextureRegion sprite = AssetManager.getInstance().getTextureRegion("bullet_danmaku");
         bullet.setSprite(sprite);
         return bullet;
     }
+    public static Bullet createEnemyBullet(float x, float y, int damage) {
+        return createEnemyBullet(x, y, damage, "bullet_danmaku");
+    }
+
     public static Boss createBoss(float x, float y, String name, int hp) {
         Boss boss = new Boss(x, y, name, hp);
         Animation<TextureRegion> idleAnim = AssetManager.getInstance().getAnimation("boss_idle");

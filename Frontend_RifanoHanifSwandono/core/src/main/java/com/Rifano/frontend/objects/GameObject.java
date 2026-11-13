@@ -58,27 +58,6 @@ public abstract class GameObject implements com.Rifano.frontend.objects.Collidab
     public void onCollision(com.Rifano.frontend.objects.Collidable other) {
     }
 
-    public float getX(){
-        return x;
-    }
-    public void setX(float x){
-        this.x=x;
-    }
-    public float getY(){
-        return y;
-    }
-    public void setY(float y){
-        this.y=y;
-    }
-    public float getWidth(){
-        return width;
-    }
-    public float getHeight(){
-        return height;
-    }
-    public float getSpeed(){
-        return speed;
-    }
     public Color getColor(){
         return color;
     }
@@ -100,28 +79,49 @@ public abstract class GameObject implements com.Rifano.frontend.objects.Collidab
     public void setWidth(float width) {
         if (width > 0) this.width = width;
     }
-
     public void setHeight(float height) {
         if (height > 0) this.height = height;
     }
-
     public void setSpeed(float speed) {
         if (speed >= 0) this.speed = speed;
     }
-
     protected boolean active = true;
-
     public boolean isDestroyed() {
         return !active;
     }
-
     public void destroy() {
         this.active = false;
     }
-
     public boolean isOffScreen(float screenWidth, float screenHeight) {
         return this.x < -50 || this.x > screenWidth + 50 || this.y < -50 || this.y > screenHeight + 50;
     }
+    public float getX(){
+        return x;
+    }
+    public void setX(float x){
+        this.x=x;
+    }
+    public float getY(){
+        return y;
+    }
+    public void setY(float y){
+        this.y=y;
+    }
+    public float getWidth(){
+        return width;
+    }
+    public float getHeight(){
+        return height;
+    }
+    public float getSpeed(){
+        return speed;
+    }
+    public void setActive(boolean active) { this.active = active; }
+    public float getStateTime() { return stateTime; }
+    public void setStateTime(float stateTime) { this.stateTime = stateTime; }
+    public boolean isActive() {
+        return active;
+  }
 
 }
 

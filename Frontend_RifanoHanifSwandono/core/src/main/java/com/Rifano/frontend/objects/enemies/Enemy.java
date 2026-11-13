@@ -1,11 +1,13 @@
 package com.Rifano.frontend.objects.enemies;
 
-import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.Player;
 import com.badlogic.gdx.graphics.Color;
+import com.Rifano.frontend.objects.EntityShooter;
+import com.Rifano.frontend.objects.patterns.ShootingPattern;
+import com.Rifano.frontend.objects.patterns.entityStrategy.EntityMovementPattern;
 import com.Rifano.frontend.systems.AudioSystem;
 
-public class Enemy extends GameObject {
+public class Enemy extends EntityShooter {
     protected String name;
     protected int hp;
     protected int maxHp;
@@ -26,8 +28,15 @@ public class Enemy extends GameObject {
         this.maxHp = hp;
         this.scoreValue = scoreValue;
     }
-
-    public boolean takeDamage(int damage) {
+    public Enemy(float x, float y, float width, float height, Color color, String name, int hp, long scoreValue,
+                 ShootingPattern shootingPattern, EntityMovementPattern movementPattern) {
+        super(x, y, width, height, 0, color, shootingPattern, movementPattern);
+        this.name = name;
+        this.hp = hp;
+        this.maxHp = hp;
+        this.scoreValue = scoreValue;
+    }
+        public boolean takeDamage(int damage) {
         boolean wasAlive = isAlive();
         this.hp -= damage;
         if (this.hp < 0) {

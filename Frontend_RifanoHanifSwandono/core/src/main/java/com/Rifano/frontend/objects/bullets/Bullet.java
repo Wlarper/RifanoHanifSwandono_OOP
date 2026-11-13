@@ -3,6 +3,7 @@ package com.Rifano.frontend.objects.bullets;
 import com.Rifano.frontend.objects.Collidable;
 import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.enemies.Enemy;
+import com.Rifano.frontend.objects.patterns.bulletStrategy.BulletMovementPattern;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -15,6 +16,7 @@ public class Bullet extends GameObject {
     private float angle = 90f;
     private boolean isPlayerBullet;
     private boolean grazed;
+    private BulletMovementPattern movementPattern;
 
     // Constructor with default speed (400f)
     public Bullet(float x, float y, BulletType bulletType, int damage) {
@@ -53,15 +55,19 @@ public class Bullet extends GameObject {
         this.active = true;
         this.stateTime = 0f;
         this.grazed = false;
+        // [CHANGED] Problem 7: Reset strategy reference on recycle
+        this.movementPattern = null;
     }
-
     @Override
     public void update(float delta) {
         super.update(delta);
-        x += vx * delta;
-        y += vy * delta;
+        if (movementPattern != null) {
+            movementPattern.move(this, delta);
+        } else {
+            x += vx * delta;
+            y += vy * delta;
+        }
     }
-
     @Override
     public void render(SpriteBatch batch) {
         if (batch != null && active) {
@@ -72,7 +78,8 @@ public class Bullet extends GameObject {
             }
         }
     }
-
+    public BulletMovementPattern getMovementPattern() { return movementPattern; }
+    public void setMovementPattern(BulletMovementPattern movementPattern) { this.movementPattern = movementPattern; }
     public BulletType getBulletType() {
         return bulletType;
     }
@@ -100,16 +107,12 @@ public class Bullet extends GameObject {
     public void setGrazed(boolean grazed) {
         this.grazed = grazed;
     }
-
     @Override
     public void onCollision(Collidable other) {
         if (other instanceof Enemy enemy) {
             System.out.println("Bullet hit " + enemy.getName() + " for " + damage + " DMG!");
             enemy.takeDamage(damage);
             destroy();
-
         }
     }
-
-
 }

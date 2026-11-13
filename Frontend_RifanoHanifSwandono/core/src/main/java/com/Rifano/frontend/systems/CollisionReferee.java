@@ -16,6 +16,23 @@ public class CollisionReferee {
 
         List<GameObject> newDrops = new ArrayList<>();
 
+        for (Bullet bullet : bulletManager.getActivePlayerBullets()) {
+            if (bullet.isDestroyed()) continue;
+            for (GameObject entity : entities) {
+                if (entity instanceof Enemy enemy && !enemy.isDestroyed()) {
+                    if (bullet.getCoreHitbox().overlaps(enemy.getCoreHitbox())) {
+                        boolean defeated = enemy.takeDamage(bullet.getDamage());
+                        if (defeated) {
+                            player.addScore(enemy.getScoreValue());
+                            Item drop = EntityFactory.createItem(enemy.getX(), enemy.getY(), ItemType.POWER);
+                            newDrops.add(drop);
+                        }
+                        bullet.destroy();
+                        break;
+                    }
+                }
+            }
+        }
         for (Bullet bullet : bulletManager.getActiveEnemyBullets()) {
             if (bullet.isDestroyed()) continue;
             if (!player.isDestroyed()) {
@@ -34,7 +51,6 @@ public class CollisionReferee {
                 }
             }
         }
-        // [CHANGED] Problem 5: Player vs Items and Enemies with invulnerability check and life system damage
         for (GameObject entity : entities) {
             if (entity.isDestroyed()) continue;
             if (entity instanceof Item item) {
