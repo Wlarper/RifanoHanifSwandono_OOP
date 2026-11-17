@@ -1,6 +1,5 @@
 package com.Rifano.frontend.objects.enemies;
 
-import com.Rifano.frontend.objects.patterns.shootingStrategy.SpreadShot;
 import com.badlogic.gdx.graphics.Color;
 import com.Rifano.frontend.objects.patterns.shootingStrategy.FrontShot;
 import com.Rifano.frontend.objects.patterns.entityStrategy.LinearEntityMovement;
@@ -14,13 +13,13 @@ public class Fairy extends Enemy {
 
     public Fairy(String name, int hp) {
         super(150, 380, 24, 24, Color.PINK, name, hp, 500L);
-        setShootingPattern(new FrontShot( 200f, 3));
+        setShootingPattern(new FrontShot(150f, 10));
         setMovementPattern(new LinearEntityMovement(0f, -40f));
     }
 
     public Fairy(float x, float y, String name, int hp) {
         super(x, y, 24, 24, Color.PINK, name, hp, 500L);
-        setShootingPattern(new FrontShot( 200f, 3));
+        setShootingPattern(new FrontShot(150f, 10));
         setMovementPattern(new LinearEntityMovement(0f, -40f));
     }
 
@@ -29,8 +28,8 @@ public class Fairy extends Enemy {
         this.shootDelay = shootDelay;
         this.shootInterval = shootInterval;
         this.maxShots = maxShots;
-        this.shootingPattern = new FrontShot(200f, 3);
-        this.movementPattern = new LinearEntityMovement(0f, -40f);
+        setShootingPattern(new FrontShot(150f, 10));
+        setMovementPattern(new LinearEntityMovement(0f, -40f));
     }
 
     public boolean canShoot(float delta) {

@@ -8,6 +8,10 @@ import com.Rifano.frontend.objects.enemies.Fairy;
 import com.Rifano.frontend.objects.enemies.Boss;
 import com.Rifano.frontend.objects.items.Item;
 import com.Rifano.frontend.objects.items.ItemType;
+import com.Rifano.frontend.objects.patterns.entityStrategy.SCurveMovement;
+import com.Rifano.frontend.objects.patterns.entityStrategy.TargetPointMovement;
+import com.Rifano.frontend.objects.patterns.shootingStrategy.AlternatingRingShot;
+import com.Rifano.frontend.objects.patterns.shootingStrategy.SpreadShot;
 import com.Rifano.frontend.systems.AssetManager;
 import com.Rifano.frontend.systems.AudioSystem;
 import com.Rifano.frontend.systems.BulletManager;
@@ -23,7 +27,6 @@ import java.util.List;
 import com.badlogic.gdx.Input;
 import java.util.Iterator;
 
-
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Player player;
@@ -37,6 +40,10 @@ public class Main extends ApplicationAdapter {
     private InputHandler inputHandler;
     private GameHUD gameHUD;
     private float enemyShootTimer = 0f;
+    private float phaseTimer = 0f;
+    private int currentPhase = 0;
+    private float waveTimer = 0f;
+    private int wave1SpawnIndex = 0;
 
     @Override
     public void create() {
@@ -50,10 +57,7 @@ public class Main extends ApplicationAdapter {
         inputHandler = new InputHandler();
         gameHUD = new GameHUD();
 
-
         player = EntityFactory.createPlayer(200, 50, "Reimu Hakurei", 100, 15, 3);
-        boss = EntityFactory.createBoss(200, 420, "Rumia", 150);
-        entities.addAll(fairy);
         boss = EntityFactory.createBoss(200, 420, "Rumia", 150);
         powerItem = EntityFactory.createItem(180, 450, ItemType.POWER);
         pointItem = EntityFactory.createItem(220, 480, ItemType.POINT);
@@ -61,18 +65,15 @@ public class Main extends ApplicationAdapter {
         player.registerObserver(gameHUD);
 
         entities.add(player);
-        entities.addAll(fairy);
         entities.add(boss);
         entities.add(powerItem);
         entities.add(pointItem);
         inputHandler.setEntities(entities);
+
+        bulletManager.setEntities(entities);
+        boss.setMovementPattern(new TargetPointMovement(200f, 420f, 150f));
+        boss.setShootingPattern(new SpreadShot(220f, 5, 25f, 10, player, "bullet_danmaku_red"));
     }
-
-    bulletManager.setEntities(entities);
-// TODO (3 points): Inject initial strategies into Boss Rumia
-boss.setMovementPattern(new TargetPointMovement(200f, 420f, 150f));
-boss.setShootingPattern(new SpreadShot(220f, 5, 25f, 10, player, "bullet_danmaku_red"));
-
 
     @Override
     public void render() {
@@ -98,9 +99,28 @@ boss.setShootingPattern(new SpreadShot(220f, 5, 25f, 10, player, "bullet_danmaku
         bulletManager.render(batch);
         gameHUD.render(batch);
         batch.end();
-        // 8. Render UI border frame lines & Focus Mode Core Hitbox indicator
         gameHUD.renderBackground();
         player.renderFocusIndicator(gameHUD.getShapeRenderer());
+    }
+
+    private void updateFairyWave(float delta) {
+        float[] spawnX = {60f, 68f, 76f, 84f, 92f};
+        waveTimer += delta;
+        if (wave1SpawnIndex < spawnX.length && waveTimer >= 1.0f + wave1SpawnIndex * 0.267f) {
+            float x = spawnX[wave1SpawnIndex++];
+            Fairy f = EntityFactory.createFairy(x, 480f, "Left S-Curve Fairy", 8, "fairy_idle_blue");
+
+            f.setMovementPattern(new SCurveMovement(130f, (float) Math.toRadians(270), false));
+            f.setShootingPattern(null);
+
+            fairy.add(f);
+            entities.add(f);
+        }
+    }
+
+    private void resetFairyWave() {
+        waveTimer = 0f;
+        wave1SpawnIndex = 0;
     }
 
     private void restartGame() {
@@ -111,22 +131,44 @@ boss.setShootingPattern(new SpreadShot(220f, 5, 25f, 10, player, "bullet_danmaku
         entities.add(player);
         player.resetGame();
         fairy.clear();
-        fairy.add(EntityFactory.createFairy(150, 380, "Red Fairy", 20));
-        fairy.add(EntityFactory.createFairy(250, 380, "Blue Fairy", 20, "fairy_idle_blue"));
-        boss = EntityFactory.createBoss(250, 400, "Rumia", 150);
+        resetFairyWave();
+        boss = EntityFactory.createBoss(200, 420, "Rumia", 150);
+        boss.setMovementPattern(new TargetPointMovement(200f, 420f, 150f));
+        boss.setShootingPattern(new SpreadShot(220f, 5, 25f, 10, player, "bullet_danmaku_red"));
+        currentPhase = 0;
+        phaseTimer = 0f;
+        enemyShootTimer = 0f;
         powerItem = EntityFactory.createItem(180, 450, ItemType.POWER);
         pointItem = EntityFactory.createItem(220, 480, ItemType.POINT);
-        entities.addAll(fairy);
         entities.add(boss);
         entities.add(powerItem);
         entities.add(pointItem);
     }
 
     private void updateEnemyScheduler(float delta) {
+        updateFairyWave(delta);
+        fairy.removeIf(f -> f.isDestroyed() || f.isOffScreen(416, 560));
+
         enemyShootTimer += delta;
-        if (enemyShootTimer >= 1.5f) {
+        if (enemyShootTimer >= 1.5f && boss != null && !boss.isDestroyed()) {
             boss.shootBullet(bulletManager);
             enemyShootTimer = 0f;
+        }
+
+        phaseTimer += delta;
+        if (phaseTimer >= 4.0f && boss != null && !boss.isDestroyed()) {
+            phaseTimer = 0f;
+            currentPhase = (currentPhase + 1) % 2;
+
+            if (currentPhase == 0) {
+                boss.setMovementPattern(new TargetPointMovement(120f, 420f, 150f));
+                boss.setShootingPattern(new SpreadShot(220f, 5, 25f, 10, player, "bullet_danmaku_red"));
+                System.out.println("[Boss Strategy] Rumia shifted to Upper Left with Aimed SpreadShot!");
+            } else {
+                boss.setMovementPattern(new TargetPointMovement(280f, 420f, 150f));
+                boss.setShootingPattern(new AlternatingRingShot(180f, 16, 10));
+                System.out.println("[Boss Strategy] Rumia shifted to Upper Right with AlternatingRingShot!");
+            }
         }
     }
 

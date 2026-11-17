@@ -5,7 +5,9 @@ import com.Rifano.frontend.objects.bullets.BulletType;
 import com.Rifano.frontend.objects.GameObject;
 import com.Rifano.frontend.objects.items.Item;
 import com.Rifano.frontend.objects.items.ItemType;
+import com.Rifano.frontend.objects.patterns.bulletStrategy.FantasySealMovement;
 import com.Rifano.frontend.objects.patterns.bulletStrategy.HomingBulletMovement;
+import com.Rifano.frontend.objects.patterns.shootingStrategy.RingShot;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -121,7 +123,9 @@ public class BulletManager {
         int orbDamage = 35; // 35 damage x 8 orbs = 280 total spell card damage potential!
 
         List<GameObject> targetEntities = (entities != null) ? entities : this.entities;
-        // TODO (2 points): Apply Strategy Composition — instantiate a RingShot object with bulletSpeed 150f, bullet count orbCount, damage orbDamage, and bullet movement strategy FantasySealMovement(targetEnemy, targetEntities), then call execute(originX, originY, this, true)
+        FantasySealMovement sealMovement = new FantasySealMovement(targetEnemy, targetEntities);
+        RingShot ringShot = new RingShot(150f, orbCount, orbDamage, sealMovement);
+        ringShot.execute(originX, originY, this, true);
 
         System.out.println("[BulletManager] Spawned 8 Bomb Spirit Orbs via RingShot composed with FantasySealMovement!");
     }
