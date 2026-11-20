@@ -129,7 +129,7 @@ public class Player extends EntityShooter {
         notifyLivesChanged();
         this.hp = 100;
         notifyHpChanged();
-        this.power = 15;
+        this.power = 0;
         updatePowerStrategy();
         notifyPowerChanged();
         this.spellCards = 3;
@@ -245,7 +245,7 @@ public class Player extends EntityShooter {
         float minX = 32;
         float maxX = 416 - width;
         float minY = 16;
-        float maxY = 560 - height;
+        float maxY = 464 - height;
         if (x < minX) x = minX;
         if (x > maxX) x = maxX;
         if (y < minY) y = minY;

@@ -13,12 +13,14 @@ public class Fairy extends Enemy {
 
     public Fairy(String name, int hp) {
         super(150, 380, 24, 24, Color.PINK, name, hp, 500L);
+        setShotHitboxSize(28f, 28f);
         setShootingPattern(new FrontShot(150f, 10));
         setMovementPattern(new LinearEntityMovement(0f, -40f));
     }
 
     public Fairy(float x, float y, String name, int hp) {
         super(x, y, 24, 24, Color.PINK, name, hp, 500L);
+        setShotHitboxSize(28f, 28f);
         setShootingPattern(new FrontShot(150f, 10));
         setMovementPattern(new LinearEntityMovement(0f, -40f));
     }

@@ -6,6 +6,7 @@ import com.Rifano.frontend.objects.enemies.Enemy;
 import com.Rifano.frontend.objects.patterns.bulletStrategy.BulletMovementPattern;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Bullet extends GameObject {
     private BulletType bulletType;
@@ -17,6 +18,7 @@ public class Bullet extends GameObject {
     private boolean isPlayerBullet;
     private boolean grazed;
     private BulletMovementPattern movementPattern;
+    private static final float PLAYER_SHOT_HITBOX = 12f;
 
     // Constructor with default speed (400f)
     public Bullet(float x, float y, BulletType bulletType, int damage) {
@@ -58,6 +60,15 @@ public class Bullet extends GameObject {
         // [CHANGED] Problem 7: Reset strategy reference on recycle
         this.movementPattern = null;
     }
+
+    public Rectangle getShotHitbox() {
+        if (!isPlayerBullet) {
+            return getCoreHitbox();
+        }
+        return new Rectangle(x + (width - PLAYER_SHOT_HITBOX) / 2f, y + (height - PLAYER_SHOT_HITBOX) / 2f,
+            PLAYER_SHOT_HITBOX, PLAYER_SHOT_HITBOX);
+    }
+
     @Override
     public void update(float delta) {
         super.update(delta);
